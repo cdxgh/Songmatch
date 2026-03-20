@@ -21,7 +21,7 @@
   .logo-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.2); border-radius: 100px; padding: 6px 16px; font-size: 12px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px; }
   h1 { font-family: 'Playfair Display', serif; font-size: clamp(38px, 6vw, 58px); line-height: 1.15; background: linear-gradient(135deg, #e9d5ff 0%, #a78bfa 50%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 14px; }
   .sub { font-size: 15px; color: var(--muted); font-weight: 300; max-width: 400px; margin: 0 auto; line-height: 1.6; }
-
+ 
   /* API Key Setup Banner */
   .setup-banner { background: rgba(192,132,252,0.08); border: 1px solid rgba(192,132,252,0.25); border-radius: 16px; padding: 20px 24px; margin-bottom: 20px; }
   .setup-banner h3 { font-size: 14px; font-weight: 500; color: var(--accent); margin-bottom: 10px; }
@@ -35,7 +35,7 @@
   .save-btn { padding: 10px 20px; border-radius: 10px; border: none; background: rgba(192,132,252,0.2); color: var(--accent); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; border: 1px solid rgba(192,132,252,0.3); transition: all 0.2s; white-space: nowrap; }
   .save-btn:hover { background: rgba(192,132,252,0.3); }
   .key-saved { font-size: 12px; color: #4ade80; margin-top: 8px; display: none; }
-
+ 
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px; margin-bottom: 20px; }
   .upload-zone { border: 1.5px dashed var(--border2); border-radius: 16px; padding: 48px 24px; text-align: center; cursor: pointer; transition: all 0.25s; position: relative; background: rgba(255,255,255,0.01); }
   .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: var(--glow); }
@@ -90,7 +90,7 @@
     <h1>Find the Perfect Song<br><em>for Your Vibe</em></h1>
     <p class="sub">Upload a photo or pick a mood — AI finds songs for your Reels & Stories</p>
   </header>
-
+ 
   <!-- FREE API Key Setup -->
   <div class="setup-banner" id="setupBanner">
     <h3>⚡ One-time free setup — takes 2 minutes</h3>
@@ -106,7 +106,7 @@
     </div>
     <div class="key-saved" id="keySaved">✓ Key saved! You can now find songs for free.</div>
   </div>
-
+ 
   <div class="card">
     <div class="section-label">Upload a Photo (optional)</div>
     <div class="upload-zone" id="uploadZone">
@@ -137,7 +137,7 @@
       <button class="mood-btn" data-mood="Nostalgic & Throwback"><span class="mood-icon">📼</span>Nostalgic</button>
     </div>
   </div>
-
+ 
   <div class="card">
     <div class="section-label">Platform</div>
     <div class="platform-row">
@@ -149,13 +149,13 @@
     <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">✦ Find My Songs</button>
     <div id="errorBox"></div>
   </div>
-
+ 
   <div id="results"></div>
 </div>
-
+ 
 <script>
 let selectedMood = '', selectedPlatform = 'Instagram Reels', imageBase64 = '', imageType = '';
-
+ 
 // Load saved key
 window.addEventListener('load', () => {
   const saved = localStorage.getItem('gemini_key');
@@ -165,7 +165,7 @@ window.addEventListener('load', () => {
     document.getElementById('keySaved').style.display = 'block';
   }
 });
-
+ 
 function saveKey() {
   const val = document.getElementById('apiKeyInput').value.trim();
   if (!val) return;
@@ -173,7 +173,7 @@ function saveKey() {
   document.getElementById('keySaved').style.display = 'block';
   document.getElementById('setupBanner').style.opacity = '0.6';
 }
-
+ 
 document.querySelectorAll('.mood-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
@@ -187,14 +187,14 @@ document.querySelectorAll('.platform-btn').forEach(btn => {
     btn.classList.add('active'); selectedPlatform = btn.dataset.p;
   });
 });
-
+ 
 const zone = document.getElementById('uploadZone');
 const fileInput = document.getElementById('fileInput');
 zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
 zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
 zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag'); handleFile(e.dataTransfer.files[0]); });
 fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
-
+ 
 function handleFile(file) {
   if (!file || !file.type.startsWith('image/')) return;
   const reader = new FileReader();
@@ -212,7 +212,7 @@ function clearPhoto() {
   document.getElementById('previewWrap').style.display = 'none';
   zone.style.display = 'block'; fileInput.value = '';
 }
-
+ 
 async function analyze() {
   const apiKey = localStorage.getItem('gemini_key') || document.getElementById('apiKeyInput').value.trim();
   if (!apiKey) {
@@ -227,32 +227,32 @@ async function analyze() {
   document.getElementById('errorBox').innerHTML = '';
   document.getElementById('analyzeBtn').disabled = true;
   document.getElementById('results').innerHTML = `<div class="result-card"><div class="loading-state"><div class="spinner"></div><div class="loading-text">Analysing your vibe & finding songs…</div></div></div>`;
-
+ 
   const moodHint = selectedMood ? `The user selected mood: "${selectedMood}".` : '';
   const prompt = `You are SongMatch, an expert music curator for social media. ${imageBase64 ? 'Analyse the image for scene, mood, colours, and overall vibe.' : ''} ${moodHint}
-
+ 
 Recommend exactly 6 songs perfect for ${selectedPlatform} posts.
-
+ 
 Return ONLY valid JSON (no markdown, no backticks):
 {"detected_vibe":"2-4 word label","scene_description":"1 sentence","emoji":"single emoji","songs":[{"title":"","artist":"","year":"","tags":["tag1","tag2"],"emoji":"🎵"}]}
-
+ 
 Mix popular viral songs with hidden gems. Include recent hits 2022-2025 and timeless classics.`;
-
+ 
   try {
     let parts = [{ text: prompt }];
     if (imageBase64) {
       parts = [{ text: prompt }, { inline_data: { mime_type: imageType, data: imageBase64 } }];
     }
-
-    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+ 
+    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents: [{ parts }] })
     });
-
+ 
     const data = await resp.json();
     if (data.error) throw new Error(data.error.message);
-
+ 
     const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     const clean = raw.replace(/```json|```/g, '').trim();
     const result = JSON.parse(clean);
@@ -264,7 +264,7 @@ Mix popular viral songs with hidden gems. Include recent hits 2022-2025 and time
     document.getElementById('analyzeBtn').disabled = false;
   }
 }
-
+ 
 function renderResults(r) {
   const songs = r.songs.map((s, i) => `
     <div class="song-row">
